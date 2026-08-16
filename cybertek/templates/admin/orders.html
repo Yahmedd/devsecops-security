@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Orders{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header">
+      <h1><i class="fas fa-shopping-bag"></i> Orders</h1>
+      <p>Review and update order status</p>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-header">
+        <h2><i class="fas fa-list"></i> All Orders</h2>
+      </div>
+      <div class="card-content">
+        {% if orders %}
+        <div class="orders-table">
+          {% for order in orders %}
+          <div class="order-row">
+            <div class="order-cell"><strong>#{{ order.id }}</strong></div>
+            <div class="order-cell">{{ order.user.username }}</div>
+            <div class="order-cell">{{ order.created_at.strftime('%m/%d/%Y %H:%M') }}</div>
+            <div class="order-cell">${{ "%.2f"|format(order.total) }}</div>
+            <div class="order-cell">
+              <form method="POST" action="{{ url_for('admin.update_order_status', order_id=order.id) }}" style="display:flex; gap:0.5rem; align-items:center;">
+                <select name="status" style="padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 212, 255, 0.2); color: var(--light); border-radius: 8px;">
+                  {% set statuses = ['Pending','Processing','Completed','Cancelled'] %}
+                  {% for s in statuses %}
+                  <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-save"></i></button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="empty-message">No orders yet</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="admin-footer" style="margin-top:1.5rem;">
+      <a href="{{ url_for('shop.home') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

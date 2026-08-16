@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - CyberTek{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="container">
+        <a href="{{ url_for('shop.home') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+        
+        <div class="detail-grid">
+            <div class="detail-image">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
+            </div>
+            
+            <div class="detail-info">
+                <span class="detail-category">{{ product.category }}</span>
+                <h1 class="detail-title">{{ product.name }}</h1>
+                <div class="detail-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(4.5 out of 5)</span>
+                </div>
+                
+                <p class="detail-description">{{ product.description }}</p>
+                
+                <div class="detail-specs">
+                    <h3>Key Features:</h3>
+                    <ul>
+                        {% for spec in product.specs %}
+                        <li><i class="fas fa-check"></i> {{ spec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="detail-stock">
+                    <i class="fas fa-box"></i> 
+                    <span>{{ product.stock }} units in stock</span>
+                </div>
+                
+                <div class="detail-price">${{ "%.2f"|format(product.price) }}</div>
+                
+                <div class="detail-actions">
+                    <button class="btn btn-primary btn-large" onclick="addToCart({{ product.id }})">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                    <button class="btn btn-secondary btn-large">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function addToCart(productId) {
+    fetch(`/add-to-cart/${productId}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('cart-count').textContent = data.cart_count;
+            showNotification('Product added to cart!');
+        }
+    });
+}
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

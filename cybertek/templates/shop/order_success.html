@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Order Success - CyberTek{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>Order Placed Successfully!</h1>
+            <p>Thank you for your purchase. Your order has been received and is being processed.</p>
+            
+            {% if order %}
+            <div class="order-confirmation">
+                <h3>Order Details</h3>
+                <div class="confirmation-row">
+                    <span>Order ID:</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+                <div class="confirmation-row">
+                    <span>Total:</span>
+                    <strong>${{ "%.2f"|format(order.total) }}</strong>
+                </div>
+                <div class="confirmation-row">
+                    <span>Status:</span>
+                    <strong>
+                        <span class="status-badge status-{{ order.status.lower() }}">
+                            {{ order.status }}
+                        </span>
+                    </strong>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="success-actions">
+                <a href="{{ url_for('auth.profile') }}" class="btn btn-primary">
+                    <i class="fas fa-receipt"></i> View My Orders
+                </a>
+                <a href="{{ url_for('shop.home') }}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

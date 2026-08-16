@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Delete User{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header">
+      <h1><i class="fas fa-user-times"></i> Delete User</h1>
+      <p>Confirm deletion of this user</p>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-header">
+        <h2>{{ user.username }}</h2>
+      </div>
+      <div class="card-content">
+        <p>Are you sure you want to delete <strong>{{ user.username }}</strong> ({{ user.email }})? This action cannot be undone.</p>
+        <form method="POST" style="display:flex; gap:0.5rem;">
+          <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+          <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header">
+      <h1><i class="fas fa-plus"></i> Add Product</h1>
+      <p>Create a new product</p>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-header">
+        <h2>Product Details</h2>
+      </div>
+      <div class="card-content">
+        <form method="POST" action="{{ url_for('admin.add_product_page') }}" class="add-form" style="flex-wrap: wrap; gap: 0.75rem 1rem;">
+          <input type="text" name="name" placeholder="Name" required style="min-width: 200px;">
+          <input type="number" step="0.01" name="price" placeholder="Price" required style="width: 140px;">
+          <select name="category_id" required style="min-width: 160px; padding: 0.65rem 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 212, 255, 0.2); color: var(--light); border-radius: 8px;">
+            <option value="">Category</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+          <input type="text" name="image" placeholder="Image URL" style="min-width: 240px;">
+          <input type="number" name="stock" placeholder="Stock" value="0" style="width: 120px;">
+          <input type="text" name="specs" placeholder="Specs (comma separated)" style="min-width: 240px;">
+          <input type="text" name="description" placeholder="Short description" style="min-width: 280px;">
+          <div style="flex-basis:100%; display:flex; gap:0.5rem;">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create</button>
+            <a href="{{ url_for('admin.products') }}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

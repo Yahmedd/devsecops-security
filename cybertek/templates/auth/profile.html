@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - CyberTek{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="container">
+        <div class="profile-header">
+            <h1>My Profile</h1>
+            <p>Manage your account and orders</p>
+        </div>
+
+        <div class="profile-container">
+            <!-- Profile Info -->
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Account Information</h2>
+                </div>
+                <div class="profile-info">
+                    <div class="info-row">
+                        <span class="info-label">Username:</span>
+                        <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Member Since:</span>
+                        <span class="info-value">{{ user.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <i class="fas fa-key"></i>
+                    <h2>Change Password</h2>
+                </div>
+                <form method="POST" action="{{ url_for('auth.change_password') }}" class="password-form">
+                    <div class="form-group">
+                        <label for="old_password">
+                            <i class="fas fa-lock"></i> Current Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="old_password" 
+                            name="old_password" 
+                            required 
+                            placeholder="Enter current password"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">
+                            <i class="fas fa-lock"></i> New Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="new_password" 
+                            name="new_password" 
+                            required 
+                            placeholder="Enter new password"
+                            minlength="6"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">
+                            <i class="fas fa-lock"></i> Confirm New Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            required 
+                            placeholder="Confirm new password"
+                            minlength="6"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check"></i> Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div class="orders-section">
+            <div class="section-header">
+                <h2>My Orders</h2>
+                <span class="order-count">{{ orders|length }} Order{{ 's' if orders|length != 1 else '' }}</span>
+            </div>
+
+            {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <h3>Order #{{ order.id }}</h3>
+                                    <p class="order-date">
+                                        <i class="fas fa-calendar"></i> 
+                                        {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                    </p>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-{{ order.status.lower() }}">
+                                        <i class="fas fa-check-circle"></i> {{ order.status }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="order-items">
+                                {% for item in order.items %}
+                                    <div class="order-item">
+                                        <div class="item-quantity">
+                                            <span class="badge">{{ item.quantity }}x</span>
+                                        </div>
+                                        <div class="item-details">
+                                            <p class="item-name">{{ item.product.name }}</p>
+                                            <p class="item-price">${{ "%.2f"|format(item.price) }}</p>
+                                        </div>
+                                        <div class="item-total">
+                                            <p>${{ "%.2f"|format(item.price * item.quantity) }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="order-footer">
+                                <div class="order-total">
+                                    <span class="label">Total:</span>
+                                    <span class="amount">${{ "%.2f"|format(order.total) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-orders">
+                    <div class="empty-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>No Orders Yet</h3>
+                    <p>You haven't placed any orders yet. Start shopping now!</p>
+                    <a href="{{ url_for('shop.home') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> Continue Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

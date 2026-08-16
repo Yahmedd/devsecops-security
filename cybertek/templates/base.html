@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CyberTek{% endblock %}</title>
+    <link rel="icon" type="image/jpeg" href="https://cybertek-products-images-2025.s3.us-east-1.amazonaws.com/products/logo.jpeg">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="{{ url_for('shop.home') }}" class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>CyberTek</span>
+                </a>
+                <div class="nav-links">
+                    {# Render links conditionally to avoid duplicates #}
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                            {% if request.path.startswith('/admin') %}
+                                    <a href="{{ url_for('shop.home') }}" class="nav-link">Home</a>
+                                    <a href="{{ url_for('admin.stats') }}" class="nav-link {% if request.path == '/admin/stats' %}active{% endif %}">Stats</a>
+                                    <a href="{{ url_for('admin.users') }}" class="nav-link">Users</a>
+                                    <a href="{{ url_for('admin.products') }}" class="nav-link">Products</a>
+                                    <a href="{{ url_for('admin.categories') }}" class="nav-link">Categories</a>
+                                    <a href="{{ url_for('admin.orders') }}" class="nav-link">Orders</a>
+                                <a href="{{ url_for('auth.profile') }}" class="nav-link">Profile</a>
+                                <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+                            {% else %}
+                                <a href="{{ url_for('shop.home') }}" class="nav-link">Home</a>
+                                <a href="{{ url_for('shop.home') }}#products" class="nav-link">Products</a>
+                                {% if nav_categories %}
+                                    <div class="nav-link nav-categories">
+                                        Categories
+                                        <div class="dropdown-menu">
+                                            {% for c in nav_categories %}
+                                                <a href="{{ url_for('shop.home', category=c.name) }}#products" class="dropdown-item">{{ c.name }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <a href="{{ url_for('auth.profile') }}" class="nav-link">Profile</a>
+                                    <a href="{{ url_for('admin.stats') }}" class="nav-link">Dashboard</a>
+                                <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('shop.home') }}" class="nav-link">Home</a>
+                            <a href="{{ url_for('shop.home') }}#products" class="nav-link">Products</a>
+                            {% if nav_categories %}
+                                <div class="nav-link nav-categories">
+                                    Categories
+                                    <div class="dropdown-menu">
+                                        {% for c in nav_categories %}
+                                            <a href="{{ url_for('shop.home', category=c.name) }}#products" class="dropdown-item">{{ c.name }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <a href="{{ url_for('auth.profile') }}" class="nav-link">Profile</a>
+                            <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="nav-link">Sign In</a>
+                        <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
+                    {% endif %}
+                    <a href="{{ url_for('shop.cart') }}" class="nav-link cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-count">{{ session.cart|length if session.cart else 0 }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <div class="container">
+                        <span>{{ message }}</span>
+                        <button class="alert-close" onclick="this.parentElement.parentElement.style.display='none';">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-bolt"></i> CyberTek</h3>
+                    <p>Premium technology for the modern world</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#">About Us</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CyberTek. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

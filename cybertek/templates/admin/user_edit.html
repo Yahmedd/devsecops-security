@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header">
+      <h1><i class="fas fa-user-edit"></i> Edit User</h1>
+      <p>Update user details</p>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-header">
+        <h2>{{ user.username }}</h2>
+      </div>
+      <div class="card-content">
+        <form method="POST" class="add-form" style="flex-wrap:wrap; gap: 0.75rem 1rem;">
+          <input type="text" name="username" value="{{ user.username }}" placeholder="Username" required style="min-width: 220px;">
+          <input type="email" name="email" value="{{ user.email }}" placeholder="Email" required style="min-width: 260px;">
+          <input type="password" name="password" placeholder="New Password (optional)" style="min-width: 240px;">
+          <input type="password" name="confirm_password" placeholder="Confirm New Password" style="min-width: 240px;">
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="is_admin" {% if user.is_admin %}checked{% endif %}> Admin
+          </label>
+          <div style="flex-basis:100%; display:flex; gap:0.5rem;">
+            <button type="submit" class="btn btn-secondary"><i class="fas fa-save"></i> Save</button>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

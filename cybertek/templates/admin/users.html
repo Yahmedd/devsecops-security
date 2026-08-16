@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Users{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header" style="display:flex; justify-content:space-between; align-items:flex-end; gap:1rem;">
+      <div>
+        <h1><i class="fas fa-users"></i> Users</h1>
+        <p>Manage user roles and accounts</p>
+      </div>
+      <div>
+        <a href="{{ url_for('admin.add_user') }}" class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> Add User</a>
+      </div>
+    </div>
+
+    {% if users %}
+    <div class="users-table">
+      {% for u in users %}
+      <div class="user-row">
+        <div class="user-cell"><strong>{{ u.username }}</strong><br><small style="color:#a0a0a0;">{{ u.email }}</small></div>
+        <div class="user-cell">Joined {{ u.created_at.strftime('%m/%d/%Y') }}</div>
+        <div class="user-cell">
+          {% if u.is_admin %}
+          <span class="admin-badge"><i class="fas fa-crown"></i> Admin</span>
+          {% else %}
+          <span class="user-badge">Customer</span>
+          {% endif %}
+        </div>
+        <div class="user-cell"><span class="order-count">{{ u.orders|length }} orders</span></div>
+        <div class="user-cell" style="display:flex; gap:0.5rem;">
+          <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn btn-edit btn-sm"><i class="fas fa-edit"></i> Edit</a>
+          <a href="{{ url_for('admin.delete_user_page', user_id=u.id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="empty-message">No users found</p>
+    {% endif %}
+
+    <div class="admin-footer" style="margin-top:1.5rem;">
+      <a href="{{ url_for('shop.home') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

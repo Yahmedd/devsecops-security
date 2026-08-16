@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - CyberTek{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your CyberTek account</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            placeholder="Enter your username"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Enter your password"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? 
+                        <a href="{{ url_for('auth.signup') }}" class="auth-link">Create One</a>
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="auth-decoration">
+                <div class="decoration-circle"></div>
+                <div class="decoration-shapes">
+                    <div class="shape shape-sm"></div>
+                    <div class="shape shape-md"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

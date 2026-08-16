@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - CyberTek{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Create Account</h1>
+                    <p>Join CyberTek and start shopping</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.signup') }}" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            placeholder="Enter your username"
+                            minlength="3"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            placeholder="Enter your email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Create a password"
+                            minlength="6"
+                        >
+                        <small>At least 6 characters</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            required 
+                            placeholder="Confirm your password"
+                            minlength="6"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-block">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="auth-link">Sign In</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="auth-decoration">
+                <div class="decoration-circle"></div>
+                <div class="decoration-shapes">
+                    <div class="shape shape-sm"></div>
+                    <div class="shape shape-md"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

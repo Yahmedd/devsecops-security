@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - CyberTek{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container admin-layout">
+        <aside class="admin-sidebar">
+            <h3>Manage</h3>
+            <a href="#users" class="sidebar-link"><i class="fas fa-users"></i> Users</a>
+            <a href="#products" class="sidebar-link"><i class="fas fa-box"></i> Products</a>
+            <a href="#categories" class="sidebar-link"><i class="fas fa-tags"></i> Categories</a>
+            <a href="#orders" class="sidebar-link"><i class="fas fa-shopping-bag"></i> Orders</a>
+        </aside>
+        <div class="admin-main">
+        <div class="admin-header">
+            <h1><i class="fas fa-cog"></i> Admin Dashboard</h1>
+            <p>Manage products, categories, and orders</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ products|length }}</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ categories|length }}</h3>
+                    <p>Categories</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ orders|length }}</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ users|length }}</h3>
+                    <p>Users</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Management -->
+        <div class="admin-card" id="categories">
+            <div class="card-header">
+                <h2><i class="fas fa-tags"></i> Categories Management</h2>
+            </div>
+            <div class="card-content">
+                <form method="POST" action="{{ url_for('add_category') }}" class="add-form">
+                    <input 
+                        type="text" 
+                        name="name" 
+                        placeholder="Enter category name" 
+                        required
+                        minlength="2"
+                    >
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                </form>
+
+                <div class="categories-list">
+                    {% if categories %}
+                        {% for category in categories %}
+                            <div class="category-item">
+                                <div class="category-info">
+                                    <h4>{{ category.name }}</h4>
+                                    <p>{{ category.products|length }} product(s)</p>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this category?');">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="empty-message">No categories found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Overview -->
+        <div class="admin-card" id="orders">
+            <div class="card-header">
+                <h2><i class="fas fa-shopping-bag"></i> Recent Orders</h2>
+            </div>
+            <div class="card-content">
+                {% if orders %}
+                    <div class="orders-table">
+                        {% for order in orders[:10] %}
+                            <div class="order-row">
+                                <div class="order-cell">
+                                    <strong>#{{ order.id }}</strong>
+                                </div>
+                                <div class="order-cell">
+                                    {{ order.user.username }}
+                                </div>
+                                <div class="order-cell">
+                                    {{ order.created_at.strftime('%m/%d/%Y') }}
+                                </div>
+                                <div class="order-cell">
+                                    ${{ "%.2f"|format(order.total) }}
+                                </div>
+                                <div class="order-cell">
+                                    <span class="status-badge status-{{ order.status.lower() }}">
+                                        {{ order.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-message">No orders yet</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Products Management -->
+        <div class="admin-card" id="products">
+            <div class="card-header">
+                <h2><i class="fas fa-box"></i> Products Management</h2>
+            </div>
+            <div class="card-content">
+                <!-- Add Product -->
+                <form method="POST" action="{{ url_for('admin_add_product') }}" class="add-form" style="flex-wrap: wrap; gap: 0.75rem 1rem;">
+                    <input type="text" name="name" placeholder="Name" required style="min-width: 200px;">
+                    <input type="number" step="0.01" name="price" placeholder="Price" required style="width: 120px;">
+                    <select name="category_id" required style="min-width: 160px; padding: 0.65rem 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 212, 255, 0.2); color: var(--light); border-radius: 8px;">
+                        <option value="">Category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" name="image" placeholder="Image URL" style="min-width: 240px;">
+                    <input type="number" name="stock" placeholder="Stock" value="0" style="width: 100px;">
+                    <input type="text" name="specs" placeholder="Specs (comma separated)" style="min-width: 220px;">
+                    <input type="text" name="description" placeholder="Short description" style="min-width: 240px;">
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+                </form>
+
+                <!-- Existing Products -->
+                {% if products %}
+                <div class="users-table" style="margin-top: 1rem;">
+                    {% for p in products %}
+                    <div class="user-row" style="grid-template-columns: 1.2fr 0.7fr 0.8fr 1.2fr 0.6fr 1fr;">
+                        <div class="user-cell"><strong>{{ p.name }}</strong><br><small style="color:#a0a0a0;">#{{ p.id }}</small></div>
+                        <div class="user-cell">${{ "%.2f"|format(p.price) }}</div>
+                        <div class="user-cell">{{ p.category.name if p.category else 'Uncategorized' }}</div>
+                        <div class="user-cell" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:320px;">{{ (p.description or '')[:60] }}{% if p.description and p.description|length > 60 %}...{% endif %}</div>
+                        <div class="user-cell">Stock: {{ p.stock }}</div>
+                        <div class="user-cell">
+                            <form method="POST" action="{{ url_for('admin_delete_product', product_id=p.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this product?');"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Inline edit form -->
+                    <form method="POST" action="{{ url_for('admin_edit_product', product_id=p.id) }}" class="add-form" style="margin-top: 0.5rem; gap: 0.75rem 1rem;">
+                        <input type="text" name="name" value="{{ p.name }}" placeholder="Name" required style="min-width: 200px;">
+                        <input type="number" step="0.01" name="price" value="{{ p.price }}" placeholder="Price" required style="width: 120px;">
+                        <select name="category_id" required style="min-width: 160px; padding: 0.65rem 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 212, 255, 0.2); color: var(--light); border-radius: 8px;">
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if p.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="image" value="{{ p.image }}" placeholder="Image URL" style="min-width: 240px;">
+                        <input type="number" name="stock" value="{{ p.stock }}" placeholder="Stock" style="width: 100px;">
+                        <input type="text" name="specs" value="{% if p.specs %}{{ (p.specs) }}{% endif %}" placeholder="Specs (comma separated)" style="min-width: 220px;">
+                        <input type="text" name="description" value="{{ p.description }}" placeholder="Short description" style="min-width: 240px;">
+                        <button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-save"></i> Save</button>
+                    </form>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    <p class="empty-message">No products found</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Users List -->
+        <div class="admin-card" id="users">
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> Users</h2>
+            </div>
+            <div class="card-content">
+                {% if users %}
+                    <div class="users-table">
+                        {% for user in users %}
+                            <div class="user-row">
+                                <div class="user-cell">
+                                    <strong>{{ user.username }}</strong>
+                                </div>
+                                <div class="user-cell">
+                                    {{ user.email }}
+                                </div>
+                                <div class="user-cell">
+                                    {{ user.created_at.strftime('%m/%d/%Y') }}
+                                </div>
+                                <div class="user-cell">
+                                    {% if user.is_admin %}
+                                        <span class="admin-badge"><i class="fas fa-crown"></i> Admin</span>
+                                    {% else %}
+                                        <span class="user-badge">Customer</span>
+                                    {% endif %}
+                                </div>
+                                <div class="user-cell">
+                                    <span class="order-count">{{ user.orders|length }} orders</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-message">No users found</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="admin-footer">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Shop
+            </a>
+        </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

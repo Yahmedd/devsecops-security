@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header">
+      <h1><i class="fas fa-edit"></i> Edit Category</h1>
+      <p>Update category name</p>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-header">
+        <h2>{{ category.name }}</h2>
+      </div>
+      <div class="card-content">
+        <form method="POST" action="{{ url_for('admin.edit_category_page', category_id=category.id) }}" class="add-form">
+          <input type="text" name="name" placeholder="Category name" value="{{ category.name }}" required minlength="2">
+          <div style="flex-basis:100%; display:flex; gap:0.5rem;">
+            <button type="submit" class="btn btn-secondary"><i class="fas fa-save"></i> Save</button>
+            <a href="{{ url_for('admin.categories') }}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

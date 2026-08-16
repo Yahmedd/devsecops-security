@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="admin-section">
+  <h2><i class="fas fa-chart-line"></i> Statistique</h2>
+  <div class="stats-grid stats-3-col">
+    <div class="stat-card">
+      <div class="stat-label">Users</div>
+      <div class="stat-value">{{ metrics.users }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Categories</div>
+      <div class="stat-value">{{ metrics.categories }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Products</div>
+      <div class="stat-value">{{ metrics.products }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Orders</div>
+      <div class="stat-value">{{ metrics.orders }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending Orders</div>
+      <div class="stat-value">{{ metrics.orders_pending }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Processing Orders</div>
+      <div class="stat-value">{{ metrics.orders_processing }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Completed Orders</div>
+      <div class="stat-value">{{ metrics.orders_completed }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cancelled Orders</div>
+      <div class="stat-value">{{ metrics.orders_cancelled }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Revenue</div>
+      <div class="stat-value">${{ '%.2f'|format(metrics.revenue) }}</div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="stat-label">Orders by Status</div>
+    <canvas id="ordersStatusChart" height="120"></canvas>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ordersData = {{ [
+    metrics.orders_pending,
+    metrics.orders_processing,
+    metrics.orders_completed,
+    metrics.orders_cancelled
+  ] | tojson }};
+  const ctx = document.getElementById('ordersStatusChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Pending', 'Processing', 'Completed', 'Cancelled'],
+        datasets: [{
+          label: 'Orders',
+          data: ordersData,
+          borderColor: 'rgba(0, 212, 255, 0.8)',
+          backgroundColor: 'rgba(0, 212, 255, 0.2)',
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#cfe5ff' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+          y: { ticks: { color: '#cfe5ff' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

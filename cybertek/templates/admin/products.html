@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Products{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-header" style="display:flex; justify-content:space-between; align-items:flex-end; gap:1rem;">
+      <div>
+        <h1><i class="fas fa-box"></i> Products</h1>
+        <p>Manage products (list, edit, delete)</p>
+      </div>
+      <div>
+        <a href="{{ url_for('admin.add_product_page') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</a>
+      </div>
+    </div>
+
+    <!-- Minimal page: list only, with edit/delete icons; link to add form page -->
+
+    <div class="admin-card" style="margin-top:1rem;">
+      <div class="card-header">
+        <h2><i class="fas fa-list"></i> Existing Products</h2>
+      </div>
+      <div class="card-content">
+        {% if products %}
+        <div class="users-table" style="margin-top: 0.5rem;">
+          {% for p in products %}
+          <div class="user-row" style="grid-template-columns: 1.2fr 0.7fr 0.8fr 1.2fr 0.6fr 1fr;">
+            <div class="user-cell"><strong>{{ p.name }}</strong><br><small style="color:#a0a0a0;">#{{ p.id }}</small></div>
+            <div class="user-cell">${{ "%.2f"|format(p.price) }}</div>
+            <div class="user-cell">{{ p.category.name if p.category else 'Uncategorized' }}</div>
+            <div class="user-cell" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:320px;">{{ (p.description or '')[:60] }}{% if p.description and p.description|length > 60 %}...{% endif %}</div>
+            <div class="user-cell">Stock: {{ p.stock }}</div>
+            <div class="user-cell" style="display:flex; gap:0.5rem;">
+              <a href="{{ url_for('admin.edit_product_page', product_id=p.id) }}" class="btn btn-edit btn-sm"><i class="fas fa-edit"></i></a>
+              <form method="POST" action="{{ url_for('admin.delete_product', product_id=p.id) }}" style="display:inline;" onsubmit="return confirm('Delete this product?');">
+                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </div>
+          
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="empty-message">No products found</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="admin-footer" style="margin-top:1.5rem;">
+      <a href="{{ url_for('shop.home') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
