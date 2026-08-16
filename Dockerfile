@@ -20,7 +20,6 @@ RUN groupadd --system appgroup \
 
 COPY --from=builder /install /usr/local
 RUN python -m pip install --no-cache-dir --upgrade "setuptools>=78.1.1" "msgpack>=1.2.1"
-RUN python -m pip install --no-cache-dir --upgrade "setuptools>=78.1.1" "msgpack>=1.2.1"
 COPY --chown=appuser:appgroup cybertek/ ./cybertek/
 COPY --chown=appuser:appgroup run.py ./
 
